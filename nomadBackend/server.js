@@ -6,15 +6,17 @@ var port = process.env.PORT || 8080;
 var cors = require('cors');
 var bodyParser = require('body-parser')
 
-//Functions
-var functions = require('./lib/functions')
+// Pi Functions
+var Pi = require('./lib/pi-firebase');
+
+var data = require('./lib/object-firebase');
 
 //Live Stream URL
-var urlStream = 'http://10.104.10.84:8090/';
+var urlStream = '...';
 
 
 app.use(express.json());
-app.use(express.urlencoded({extended: false}))
+app.use(express.urlencoded({extended: true}))
 app.use(bodyParser.json());
 app.use(cors());
 
@@ -28,33 +30,42 @@ app.get('/api/video', function(req,res,next){
     res.next();
 })
 
+app.post('/api/tf', function(req,res){
+    var id = req.body.objects[0].id;
+    var name = req.body.objects[0].name;
+
+    console.log(id + name);
+    data.updateObjects(id,name);
+    res.sendStatus(200);
+})
+
 app.post('/api/motion/', function(req,res){
 
     var motionString  = req.body.type;
     console.log(motionString);
     if(motionString == "STAT")
     {
-        functions.initialMovement();
+        Pi.initialMovement();
         res.sendStatus(200);
     }
     else if(motionString == "FWRD")
     {
-        functions.updateUp(true);
+        Pi.updateUp(true);
         res.sendStatus(200);
     }
     else if(motionString == "BACK")
     {
-        functions.updateDown(true);
+        Pi.updateDown(true);
         res.sendStatus(200);
     }
     else if(motionString == "LEFT")
     {
-        functions.updateLeft(true);
+        Pi.updateLeft(true);
         res.sendStatus(200);
     }
     else if(motionString == "RGHT")
     {
-        functions.updateRight(true);
+        Pi.updateRight(true);
         res.sendStatus(200);
     }
     else
