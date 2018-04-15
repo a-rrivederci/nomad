@@ -2,8 +2,6 @@ import pyrebase
 import sys
 
 sys.path.append('../')
-sys.path.append('../../')
-sys.path.append('../nomadRPi/nomad')
 from nomadRPi import Rover
 
 DB = None
@@ -17,13 +15,13 @@ config = {
     "storageBucket": "nomad-e1934.appspot.com",
 }
 
-def getState():
-    global DB
-    state  = DB.child("PiMove").get()
-    currentState = state
+# def getState():
+#     global DB
+#     currentState = DB.child("PiMove").get()
 
 def stream_handler(message):
     global DB
+    global ROVER
     sens1, sens2, sens3 = ROVER.sensor()
     batt_lvl = ROVER.battery()
     data = {"Sensor1":sens1, "Sensor2":sens2, "Sensor3":sens3, "Battery":batt_lvl}
@@ -47,13 +45,13 @@ def stream_handler(message):
 
 def main():
     global DB
-    global rover
+    global ROVER
     firebase = pyrebase.initialize_app(config)
 
     # Database Variable
     DB = firebase.database()
 
-    currentState = ""
+    # currentState = ""
 
     # initialize rover
     ROVER = Rover()
