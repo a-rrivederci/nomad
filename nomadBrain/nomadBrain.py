@@ -4,9 +4,10 @@ import sys
 sys.path.append('../')
 sys.path.append('../../')
 sys.path.append('../nomadRPi/nomad')
-from nomadRPi.nomad import rover
+from nomadRPi import Rover
 
 DB = None
+ROVER = None
 
 config = {
     "apiKey": "AIzaSyDKstoSby1YdpTfy7xqAiDPt5Ta50PoOIw",
@@ -23,8 +24,8 @@ def getState():
 
 def stream_handler(message):
     global DB
-    sens1, sens2, sens3 = rover.sensor()
-    batt_lvl = rover.battery()
+    sens1, sens2, sens3 = ROVER.sensor()
+    batt_lvl = ROVER.battery()
     data = {"Sensor1":sens1, "Sensor2":sens2, "Sensor3":sens3, "Battery":batt_lvl}
     DB.child("PiMove").child("Sensors").set(data)
     print(message["data"])
@@ -32,20 +33,21 @@ def stream_handler(message):
         if message["data"][x]:
             if x == "up":
                 # move rover up
-                rover.forward()
+                ROVER.forward()
             elif x == "down":
                 # move rover down
-                rover.back()
+                ROVER.back()
             elif x == "right":
                 # move rover right
-                rover.right()
+                ROVER.right()
             elif x == "left":
                 # move rover left
-                rover.left()
+                ROVER.left()
 
 
 def main():
     global DB
+    global rover
     firebase = pyrebase.initialize_app(config)
 
     # Database Variable
@@ -54,11 +56,12 @@ def main():
     currentState = ""
 
     # initialize rover
-    if not rover.init():
+    ROVER = Rover()
+    if not ROVER.connected:
         print("Failed to connect to NOMAD Rover.")
         exit(1)
 
-    my_stream = DB.child("PiMove").child("Movement").stream(stream_handler)
+    DB.child("PiMove").child("Movement").stream(stream_handler)
 
 if __name__ == "__main__":
     main()
