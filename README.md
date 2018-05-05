@@ -1,4 +1,4 @@
-# NOMAD :robot:
+# NOMAD :minibus:
 
 **Nomad** is the terrestrial agent of the Triple-N system. It is an explorer rover enabled with an object detecting trained model which can be controlled remotely.
 

@@ -1,0 +1,31 @@
+/**
+ * @version 2.0.0
+ * @since 23-APR-2018
+*/
+
+html, body {
+	margin: 0;
+	padding: 0;
+}
+
+#main {
+	height: 100vh;
+}
+
+a:hover {
+	text-decoration: none;
+}
+
+.toggle-button {
+	width: 100px;
+	cursor: pointer;
+	transition: opacity 0.5s;
+}
+.toggle-button:hover {
+	opacity: 0.8;
+}
+
+#brand {
+	color: orangered;
+	font-weight: 700;
+}
