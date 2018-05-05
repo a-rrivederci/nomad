@@ -35,4 +35,4 @@ Tested with Raspberry Pi 3 Model B
 ### Raspberry Pi
 From the home directory (`cd ~` to go there):
 - `./stream.sh` to start livestream
-- `cd ~/nomad/nomadBrain && python3 nomadBrain.py`
+- `cd ~/nomad/nomad-rpi && python3 brain.py`

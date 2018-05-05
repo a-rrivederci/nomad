@@ -4,10 +4,9 @@ All notable changes to this project will be documented in this file.
 The format of this change log is based on [Keep a Changelog](http://keepachangelog.com/).  
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased] - DD-MMM-YYYY
+## [Unreleased] - DD-MAY-2018
 ### Changed
-- VR background to hexagonal tiles
-- Set overlay elements in VR
+- `nomadRPi` -> `nomad-rpi`
 
 ## 0.0.1 - 17-MAR-2018
 ### Features
