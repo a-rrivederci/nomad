@@ -3,6 +3,7 @@
 Dashboard for controlling robot and viewing video stream.
 
 ## Setup
+
 > Ensure `node` and `npm` are installed on your computer. You can install both from [here](https://nodejs.org/en/download/current/).
 1. Clone this repository and go into the directory
 ```bash
@@ -29,4 +30,5 @@ To create a production build, use npm run build.
 ```
 
 ## License
+
 License can be found in [LICENSE](/LICENSE)
