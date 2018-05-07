@@ -45,21 +45,43 @@ void serialReady() {
 
 // Runs specific function based on asserted command
 void decodeCommand(char cmd) {
+  // if next command does not equal the previous one,
+  // reset the motor speed to minimum.
+  // if it does increase the speed or cap the speed.
+
+  // Check if STOP command or sensor data is requested
+  if (cmd == STOP || cmd == SENS) {
+    // Do nothing
+  }
+  // Check if the same movement command is sent;
+  // Saturate Speed or increase speed
+  else if (cmd == motion) {
+    // Increase speed
+    if (speed >= 235) {
+      speed = 255;
+    }
+    else {
+      speed = speed + 5;
+    }
+  }
+  // Check if the next movement command is not the current;
+  // Stop and use base speed
+  else if (cmd != motion) {
+    nStop(); // first stop motion
+    speed = 90;
+  }
+
   switch (cmd) {
     case FWRD:
-      nStop();
       nForward();
       break;
     case BKWD:
-      nStop();
       nBackward();
       break;
     case RGHT:
-      nStop();
       nRight();
       break;
     case LEFT:
-      nStop();
       nLeft();
       break;
     case SENS:

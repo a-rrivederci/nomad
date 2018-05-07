@@ -3,6 +3,7 @@
 
 // Stops robot
 void nStop() {
+  // Avoid sending multiple STOP commands when stopped
   if (motion == STOP) {
     return;
   }
@@ -22,9 +23,6 @@ void nStop() {
 
 // Move robot forward
 void nForward() {
-  if (motion == FWRD) {
-    return;
-  }
   motion = FWRD;
 
   // Set forward pins to HIGH
@@ -32,18 +30,16 @@ void nForward() {
   digitalWrite(LFD, HIGH);
   // Set backward pins to LOW
   digitalWrite(RBD, LOW);
-  digitalWrite(LBD, LOW); 
-  // Accelerate fwd
-  accelerate();
+  digitalWrite(LBD, LOW);
+
+  // Actuate speed
+  setSpeed();
 
   return;
 }
 
 // Move robot Backwards
 void nBackward() {
-  if (motion == BKWD) {
-    return;
-  }
   motion = BKWD;
 
   // Set forward pins to LOW
@@ -52,17 +48,15 @@ void nBackward() {
   // Set backward pins to HIGH
   digitalWrite(RBD, HIGH);
   digitalWrite(LBD, HIGH); 
-  // Accelerate bwd
-  accelerate();
+  
+  // Actuate speed
+  setSpeed();
 
   return;
 }
 
 // Move robot right
 void nRight() {
-  if (motion == RGHT) {
-    return;
-  }
   motion = RGHT;
 
   // Set right pins reverse
@@ -71,17 +65,15 @@ void nRight() {
   // Set left pins to forward
   digitalWrite(LFD, HIGH);
   digitalWrite(LBD, LOW);
-  // Accelerate fwd
-  accelerateRight();
+
+  // Actuate speed
+  setSpeed();
 
   return;
 }
 
 // Move robot left
 void nLeft() {
-  if (motion == LEFT) {
-    return;
-  }
   motion = LEFT;
 
   // Set right pins forward
@@ -90,38 +82,28 @@ void nLeft() {
   // Set left pins to reverse
   digitalWrite(LFD, LOW);
   digitalWrite(LBD, HIGH);
-  // Accelerate bwd
-  accelerateLeft();
+  
+  // Actuate speed
+  setSpeed();
 
   return;
 }
 
-// Slowly increase enable pin values
-void accelerate() {
-  // accelerate right and left side
-  for (int val=0x00; val<=MSD; val+=ACC) { // Control motor speed
-    analogWrite(ENR, val);
-    analogWrite(ENL, val);
-    delay(5);      
+// Set speed values for forward, backward, left and right motions
+void setSpeed() {
+  switch (motion) {
+    case FWRD:
+      analogWrite(ENR, speed);
+      analogWrite(ENL, speed);
+      break;
+    case LEFT:
+      analogWrite(ENR, speed);
+      analogWrite(ENL, 0);
+    case RGHT:
+      analogWrite(ENR, 0);
+      analogWrite(ENL, speed);
+    default:
+      break; 
   }
-
-  return;
-}
-void accelerateLeft() {
-  // accelerate right side
-  for (int val=0x00; val<=MSD; val+=ACC) { // Control motor speed
-    analogWrite(ENR, val);
-    delay(5);      
-  }
-
-  return;
-}
-void accelerateRight() {
-  // accelerate left side
-  for (int val=0x00; val<=MSD; val+=ACC) { // Control motor speed
-    analogWrite(ENL, val);
-    delay(5);      
-  }
-
   return;
 }

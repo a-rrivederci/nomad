@@ -13,8 +13,8 @@
 #define LFD         (9) // left forward
 
 // Robot Parameters
-#define MSD         (0xff) // max speed
-#define ACC         (0x05) // acceleration
+#define MSD         (255) // max speed
+#define ACC         (5) // acceleration
 
 // Motion API
 #define STOP        ('A')
@@ -28,7 +28,8 @@
 #define FIRST       STOP
 #define LAST        SENS
 
-char motion = STOP; // Currrent motion 
+char motion = STOP; // Currrent motion
+int speed = 0; // Motor Speed
 
 // Program setup
 void setup() {
@@ -43,7 +44,7 @@ void setup() {
 
   // Start serial ----------------------
   Serial.begin(9600);
-  Serial.println("NOMAD Uno v2.0.0");
+  Serial.println("NOMAD Uno v3.0.0");
 
   // Disbale all motors 
   digitalWrite(RFD, LOW); // disable right fwd pins
