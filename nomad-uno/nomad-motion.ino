@@ -2,12 +2,12 @@
 // @since 19-APR-2018
 
 // Stops robot
-void nStop() {
+void roverStop() {
   // Avoid sending multiple STOP commands when stopped
-  if (motion == STOP) {
+  if (currentState == STOP) {
     return;
   }
-  motion = STOP;
+  currentState = STOP;
 
   // Disable
   // Set all motor pins to low
@@ -18,12 +18,16 @@ void nStop() {
   digitalWrite(LBD, LOW); // disable left bwd pins
   digitalWrite(ENL, LOW); // disable left motors
 
+  #ifdef DBG
+  Serial.println(F("Stop Rover"));
+  #endif
+
   return;
 }
 
 // Move robot forward
-void nForward() {
-  motion = FWRD;
+void roverForward() {
+  currentState = FWRD;
 
   // Set forward pins to HIGH
   digitalWrite(RFD, HIGH);
@@ -35,12 +39,17 @@ void nForward() {
   // Actuate speed
   setSpeed();
 
+  #ifdef DBG
+  Serial.print(F("Rover Fwd: "));
+  Serial.println(motorSpeed);
+  #endif
+
   return;
 }
 
 // Move robot Backwards
-void nBackward() {
-  motion = BKWD;
+void roverBackward() {
+  currentState = BKWD;
 
   // Set forward pins to LOW
   digitalWrite(RFD, LOW);
@@ -52,12 +61,17 @@ void nBackward() {
   // Actuate speed
   setSpeed();
 
+  #ifdef DBG
+  Serial.print(F("Rover Bkd: "));
+  Serial.println(motorSpeed);
+  #endif
+
   return;
 }
 
 // Move robot right
-void nRight() {
-  motion = RGHT;
+void roverRight() {
+  currentState = RGHT;
 
   // Set right pins reverse
   digitalWrite(RFD, LOW);
@@ -69,12 +83,17 @@ void nRight() {
   // Actuate speed
   setSpeed();
 
+  #ifdef DBG
+  Serial.print(F("Rover Rgt: "));
+  Serial.println(motorSpeed);
+  #endif
+
   return;
 }
 
 // Move robot left
-void nLeft() {
-  motion = LEFT;
+void roverLeft() {
+  currentState = LEFT;
 
   // Set right pins forward
   digitalWrite(RFD, HIGH);
@@ -86,22 +105,31 @@ void nLeft() {
   // Actuate speed
   setSpeed();
 
+  #ifdef DBG
+  Serial.print(F("Rover Lft: "));
+  Serial.println(motorSpeed);
+  #endif
+
   return;
 }
 
-// Set speed values for forward, backward, left and right motions
+// Set speed values for forward, backward, left and right states
 void setSpeed() {
-  switch (motion) {
+  switch (currentState) {
     case FWRD:
-      analogWrite(ENR, speed);
-      analogWrite(ENL, speed);
+      analogWrite(ENR, motorSpeed);
+      analogWrite(ENL, motorSpeed);
+      break;
+    case BKWD:
+      analogWrite(ENR, motorSpeed);
+      analogWrite(ENL, motorSpeed);
       break;
     case LEFT:
-      analogWrite(ENR, speed);
+      analogWrite(ENR, motorSpeed);
       analogWrite(ENL, 0);
     case RGHT:
       analogWrite(ENR, 0);
-      analogWrite(ENL, speed);
+      analogWrite(ENL, motorSpeed);
     default:
       break; 
   }

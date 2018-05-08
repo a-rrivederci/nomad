@@ -7,6 +7,9 @@ void serialEvent() {
     // Get the new byte of data
     char inChar = (char)Serial.read();
 
+    // If command is not asserted, check if it is an end character
+    // For end character reset the inChar,
+    // else return unassertion and prep for the next command
     if (assertCommand(inChar)) {
       // Immediately parse input for decoding
       Serial.println(F("Asserted"));
@@ -18,7 +21,6 @@ void serialEvent() {
       }
       else {
         Serial.println(F("Not Asserted"));
-        // Send end signal
         serialReady();
       }
     }
@@ -27,13 +29,14 @@ void serialEvent() {
 
 // Checks if the added command is part of the API specs
 // this catches bad commands early.
-byte assertCommand(char cmd) {
-  byte ret = 0x00;
-  // check if cmd is a capital letter
-  if ((cmd >= FIRST) && (cmd <= LAST)) {
-    ret = 0x01;
+byte assertCommand(char nextCmd) {
+  byte value = 0;
+  // check if nextCmd is a capital letter in the current protocol
+  // ASCII A(65) - F(70)
+  if ((nextCmd >= FIRST) && (nextCmd <= LAST)) {
+    value = 1;
   }
-  return ret;
+  return value;
 }
 
 // Get ready to send another message
@@ -44,51 +47,61 @@ void serialReady() {
 }
 
 // Runs specific function based on asserted command
-void decodeCommand(char cmd) {
+void decodeCommand(char nextCmd) {
   // if next command does not equal the previous one,
   // reset the motor speed to minimum.
   // if it does increase the speed or cap the speed.
 
   // Check if STOP command or sensor data is requested
-  if (cmd == STOP || cmd == SENS) {
+  if (nextCmd == STOP || nextCmd == SENS) {
     // Do nothing
   }
   // Check if the same movement command is sent;
   // Saturate Speed or increase speed
-  else if (cmd == motion) {
+  else if (nextCmd == currentState) {
     // Increase speed
-    if (speed >= 235) {
-      speed = 255;
+    if (motorSpeed >= 235) {
+      motorSpeed = MSD;
     }
     else {
-      speed = speed + 5;
+      motorSpeed = motorSpeed + 5;
+      #ifdef DBG
+      Serial.println(F("Speed++"));
+      #endif
     }
   }
   // Check if the next movement command is not the current;
   // Stop and use base speed
-  else if (cmd != motion) {
-    nStop(); // first stop motion
-    speed = 90;
+  else if (nextCmd != currentState) {
+    roverStop(); // first stop motion
+    motorSpeed = LSD;
+
+    #ifdef DBG
+    Serial.println(F("Reset speed to lowest"));
+    #endif
+  }
+  else {
+    // Nothing
   }
 
-  switch (cmd) {
+  switch (nextCmd) {
     case FWRD:
-      nForward();
+      roverForward();
       break;
     case BKWD:
-      nBackward();
+      roverBackward();
       break;
     case RGHT:
-      nRight();
+      roverRight();
       break;
     case LEFT:
-      nLeft();
+      roverLeft();
       break;
     case SENS:
       getSenosorValues();
       break;
     default:
-      nStop();
+      roverStop();
       break;
   }
   serialReady();
