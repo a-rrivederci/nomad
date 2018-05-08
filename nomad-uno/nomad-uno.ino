@@ -2,19 +2,20 @@
 // License can be found in LICENSE
 // @since 19-APR-2018
 
+#define DBG
 // Right wheels
 #define ENR         (5) // right enable
 #define RFD         (6) // right forward
 #define RBD         (7) // right backward
 
 // Left Wheels
-#define ENL         (11) //left enable
+#define ENL         (11) // left enable
 #define LBD         (8) // left backward
 #define LFD         (9) // left forward
 
 // Robot Parameters
-#define MSD         (0xff) // max speed
-#define ACC         (0x05) // acceleration
+#define LSD         (90) // min speed
+#define MSD         (255) // max speed
 
 // Motion API
 #define STOP        ('A')
@@ -24,11 +25,12 @@
 #define LEFT        ('E')
 #define SENS        ('F')
 
-// API checking
+// Protocol parameters
 #define FIRST       STOP
 #define LAST        SENS
 
-char motion = STOP; // Currrent motion 
+char currentState = STOP; // Currrent rover state
+int motorSpeed = 0; // Motor Speed
 
 // Program setup
 void setup() {
@@ -42,8 +44,8 @@ void setup() {
   pinMode(ENL, OUTPUT);
 
   // Start serial ----------------------
-  Serial.begin(9600);
-  Serial.println("NOMAD Uno v2.0.0");
+  Serial.begin(115200);
+  Serial.println("NOMAD Uno v3.0.0");
 
   // Disbale all motors 
   digitalWrite(RFD, LOW); // disable right fwd pins

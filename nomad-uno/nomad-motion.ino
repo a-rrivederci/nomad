@@ -2,11 +2,12 @@
 // @since 19-APR-2018
 
 // Stops robot
-void nStop() {
-  if (motion == STOP) {
+void roverStop() {
+  // Avoid sending multiple STOP commands when stopped
+  if (currentState == STOP) {
     return;
   }
-  motion = STOP;
+  currentState = STOP;
 
   // Disable
   // Set all motor pins to low
@@ -17,34 +18,38 @@ void nStop() {
   digitalWrite(LBD, LOW); // disable left bwd pins
   digitalWrite(ENL, LOW); // disable left motors
 
+  #ifdef DBG
+  Serial.println(F("Stop Rover"));
+  #endif
+
   return;
 }
 
 // Move robot forward
-void nForward() {
-  if (motion == FWRD) {
-    return;
-  }
-  motion = FWRD;
+void roverForward() {
+  currentState = FWRD;
 
   // Set forward pins to HIGH
   digitalWrite(RFD, HIGH);
   digitalWrite(LFD, HIGH);
   // Set backward pins to LOW
   digitalWrite(RBD, LOW);
-  digitalWrite(LBD, LOW); 
-  // Accelerate fwd
-  accelerate();
+  digitalWrite(LBD, LOW);
+
+  // Actuate speed
+  setSpeed();
+
+  #ifdef DBG
+  Serial.print(F("Rover Fwd: "));
+  Serial.println(motorSpeed);
+  #endif
 
   return;
 }
 
 // Move robot Backwards
-void nBackward() {
-  if (motion == BKWD) {
-    return;
-  }
-  motion = BKWD;
+void roverBackward() {
+  currentState = BKWD;
 
   // Set forward pins to LOW
   digitalWrite(RFD, LOW);
@@ -52,18 +57,21 @@ void nBackward() {
   // Set backward pins to HIGH
   digitalWrite(RBD, HIGH);
   digitalWrite(LBD, HIGH); 
-  // Accelerate bwd
-  accelerate();
+  
+  // Actuate speed
+  setSpeed();
+
+  #ifdef DBG
+  Serial.print(F("Rover Bkd: "));
+  Serial.println(motorSpeed);
+  #endif
 
   return;
 }
 
 // Move robot right
-void nRight() {
-  if (motion == RGHT) {
-    return;
-  }
-  motion = RGHT;
+void roverRight() {
+  currentState = RGHT;
 
   // Set right pins reverse
   digitalWrite(RFD, LOW);
@@ -71,18 +79,21 @@ void nRight() {
   // Set left pins to forward
   digitalWrite(LFD, HIGH);
   digitalWrite(LBD, LOW);
-  // Accelerate fwd
-  accelerateRight();
+
+  // Actuate speed
+  setSpeed();
+
+  #ifdef DBG
+  Serial.print(F("Rover Rgt: "));
+  Serial.println(motorSpeed);
+  #endif
 
   return;
 }
 
 // Move robot left
-void nLeft() {
-  if (motion == LEFT) {
-    return;
-  }
-  motion = LEFT;
+void roverLeft() {
+  currentState = LEFT;
 
   // Set right pins forward
   digitalWrite(RFD, HIGH);
@@ -90,38 +101,37 @@ void nLeft() {
   // Set left pins to reverse
   digitalWrite(LFD, LOW);
   digitalWrite(LBD, HIGH);
-  // Accelerate bwd
-  accelerateLeft();
+  
+  // Actuate speed
+  setSpeed();
+
+  #ifdef DBG
+  Serial.print(F("Rover Lft: "));
+  Serial.println(motorSpeed);
+  #endif
 
   return;
 }
 
-// Slowly increase enable pin values
-void accelerate() {
-  // accelerate right and left side
-  for (int val=0x00; val<=MSD; val+=ACC) { // Control motor speed
-    analogWrite(ENR, val);
-    analogWrite(ENL, val);
-    delay(5);      
+// Set speed values for forward, backward, left and right states
+void setSpeed() {
+  switch (currentState) {
+    case FWRD:
+      analogWrite(ENR, motorSpeed);
+      analogWrite(ENL, motorSpeed);
+      break;
+    case BKWD:
+      analogWrite(ENR, motorSpeed);
+      analogWrite(ENL, motorSpeed);
+      break;
+    case LEFT:
+      analogWrite(ENR, motorSpeed);
+      analogWrite(ENL, 0);
+    case RGHT:
+      analogWrite(ENR, 0);
+      analogWrite(ENL, motorSpeed);
+    default:
+      break; 
   }
-
-  return;
-}
-void accelerateLeft() {
-  // accelerate right side
-  for (int val=0x00; val<=MSD; val+=ACC) { // Control motor speed
-    analogWrite(ENR, val);
-    delay(5);      
-  }
-
-  return;
-}
-void accelerateRight() {
-  // accelerate left side
-  for (int val=0x00; val<=MSD; val+=ACC) { // Control motor speed
-    analogWrite(ENL, val);
-    delay(5);      
-  }
-
   return;
 }

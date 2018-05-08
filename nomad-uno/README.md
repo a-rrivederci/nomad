@@ -22,7 +22,7 @@ Each command is sent as a string of command followed by a newline character. Aft
 ### Example 
 
 ```text
-NOMAD Uno v2.0.0
+NOMAD Uno v3.0.0
 ~
 > A\n
 Asserted
