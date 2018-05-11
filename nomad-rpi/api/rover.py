@@ -26,10 +26,7 @@ ROOT_LOGGER.addHandler(LOG_HANDLER)
 
 
 class Rover(object):
-    '''\
-    Nomad Rover instructional. 
-    '''
-    
+    '''Nomad Rover application center'''
 
     def __init__(self):
         self.ROV_LOG = logging.getLogger("{}.py".format(__name__))
@@ -64,59 +61,51 @@ class Rover(object):
         return ret
 
     def move(self, direction: str, time: int=0.1) -> None:
-        # if direction == "F":
-        #     cmd = self.FWRD
-        # elif direction == "B":
-        #     cmd = self.BACK
-        # elif direction == "R":
-        #     cmd = self.RGHT
-        # elif direction == "L":
-        #     cmd = self.LEFT
-        # else:
-        #     cmd = self.STOP
-
         # Send command
         self.ARDUINO.flush_buffers()
         self.pause()
         self.ARDUINO.send_str(direction)
         self.pause()
+
+        return
         
     def pause(self, time: int=0.1) -> None:
         sleep(time)
 
-    def sensor(self):
+        return
+
+    def get_sensors(self) -> dict:
         '''Sensors method'''
         cmd = self.SENS
 
         # Send command
         self.ARDUINO.flush_buffers()
+        self.pause()
         self.ARDUINO.send_str(cmd)
-        
-        # Get sensor data
-        msg = ""
+        self.pause()
+
+        # Get and process sensor data
+        data = {}
         while True:
-            m = self.ARDUINO.read_str()
-            if m == self.READY_CHAR:
+            line = self.ARDUINO.read_str(strip=1)
+            if line == self.READY_CHAR:
                 break
             else:
-                msg += m + "\n"
+                label, value = line.split(':')
+                data[label] = int(value)
 
-        # sensor data
-        data = {}
-        for sens in msg.split('\n')[1:-1]:
-            name, val = [i.strip() for i in sens.split(':')]
-            data[name] = int(val)
-        ROV_LOG.info("Data: {}".format(data))
+        self.ROV_LOG.info("Data: {}".format(data))
+
         return data
 
     def get_response(self):
         '''Continously log all data on the port until protocol end'''
         while True:
-            msg = self.ARDUINO.read_str()
-            if msg == self.READY_CHAR:
+            line = self.ARDUINO.read_str()
+            if line == self.READY_CHAR:
                 break
             else:
-                MCU_LOG.info(msg)
+                self.MCU_LOG.info(line)
 
 if __name__ == "__main__":
     rover = Rover()
