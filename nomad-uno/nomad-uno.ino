@@ -28,6 +28,9 @@
 // Protocol parameters
 #define FIRST       STOP
 #define LAST        SENS
+#define ASSERT      ('>')
+#define NOT_ASSERT  ('<')
+#define READY       ('~')     
 
 char currentState = STOP; // Currrent rover state
 int motorSpeed = 0; // Motor Speed

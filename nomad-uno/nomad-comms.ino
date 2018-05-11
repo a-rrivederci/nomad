@@ -12,7 +12,7 @@ void serialEvent() {
     // else return unassertion and prep for the next command
     if (assertCommand(inChar)) {
       // Immediately parse input for decoding
-      Serial.println(F("Asserted"));
+      Serial.println(F(ASSERT));
       decodeCommand(inChar);
     }
     else {
@@ -20,7 +20,7 @@ void serialEvent() {
         inChar = "";
       }
       else {
-        Serial.println(F("Not Asserted"));
+        Serial.println(F(NOT_ASSERT));
         serialReady();
       }
     }
@@ -42,7 +42,7 @@ byte assertCommand(char nextCmd) {
 // Get ready to send another message
 void serialReady() {
   // Print end character for each command execution
-  Serial.println(F("~"));
+  Serial.println(F(READY));
   return;
 }
 

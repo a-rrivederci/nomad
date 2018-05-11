@@ -1,21 +1,21 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-"""\
-Rover class to send commands and read data from to the microcontroller.
+'''\
+Implementation specific program for the nomad rover
 
 since: 23-APR-2018
-"""
+'''
 
 import re
 import sys
 import datetime
 from time import sleep
 import logging
-from .arduino import Arduino
+from .arduino import ArduinoUno
 
 ROOT_LOGGER = logging.getLogger("nomad")
-ROOT_LOGGER.setLevel(level=logging.INFO)
+ROOT_LOGGER.setLevel(level=logging.DEBUG)
 LOG_HANDLER = logging.StreamHandler()
 LOG_FORMATTER = logging.Formatter(
     fmt='%(asctime)s [%(name)s](%(levelname)s) %(message)s',
@@ -24,17 +24,23 @@ LOG_FORMATTER = logging.Formatter(
 LOG_HANDLER.setFormatter(LOG_FORMATTER)
 ROOT_LOGGER.addHandler(LOG_HANDLER)
 
-PY_LOGGER = logging.getLogger("nomad.rover")
-MCU_LOGGER = logging.getLogger("nomad.arduino")
 
 class Rover(object):
-    """\
+    '''\
     Nomad Rover instructional. 
-    """
+    '''
+    ROV_LOG = logging.getLogger("nomad.rover")
+    MCU_LOG = logging.getLogger("nomad.arduino")
+
     def __init__(self):
         self.ARDUINO = None
-        self.BAUDRATE = 9600
-        self.END_CHAR = "~"
+        self.BAUDRATE = 115200
+        self.ptime = 0.1
+
+        # Comms protocols
+        self.ASSERT_CHAR = '>'
+        self.NOT_ASSERT_CHAR = '<'
+        self.READY_CHAR = '~'
 
         # Commands
         self.STOP = "A\n"
@@ -43,64 +49,52 @@ class Rover(object):
         self.RGHT = "D\n"
         self.LEFT = "E\n"
         self.SENS = "F\n"
-    
-    def connect(self):
-        # Establish connection with the Firmware
-        self.ARDUINO = Arduino(self.BAUDRATE)
+
+        self.ROV_LOG.info("Initialized {}".format(__class__))
+
+    def connect(self) -> bool:
+        '''Establish connection with the mcu'''
+        ret = False
+        self.ARDUINO = ArduinoUno()
         if self.ARDUINO.connect():
-            self.print_data()
-            return True
-        return False
+            self.get_response()
+            ret = True
+        return ret
 
-    def forward(self):
-        """Foward method."""
-        cmd = self.FWRD
-        self.ARDUINO.clear_buffer()
-
-        # Send command
-        self.ARDUINO.send_str_data(cmd)
-        sleep(0.1)
-
-    def back(self):
-        """Bacward method."""
-        cmd = self.BACK
-        self.ARDUINO.clear_buffer()
+    def move(self, direction: str, time: int=0.1) -> None:
+        # if direction == "F":
+        #     cmd = self.FWRD
+        # elif direction == "B":
+        #     cmd = self.BACK
+        # elif direction == "R":
+        #     cmd = self.RGHT
+        # elif direction == "L":
+        #     cmd = self.LEFT
+        # else:
+        #     cmd = self.STOP
 
         # Send command
-        self.ARDUINO.send_str_data(cmd)
-        sleep(0.1)
-
-    def right(self):
-        """Right method."""
-        cmd = self.RGHT
-        self.ARDUINO.clear_buffer()
-
-        # Send command
-        self.ARDUINO.send_str_data(cmd)
-        sleep(0.1)
-
-    def left(self):
-        """Left method."""
-        cmd = self.LEFT
-        self.ARDUINO.clear_buffer()
-
-        # Send command
-        self.ARDUINO.send_str_data(cmd)
-        sleep(0.1)
+        self.ARDUINO.flush_buffers()
+        self.pause()
+        self.ARDUINO.send_str(direction)
+        self.pause()
+        
+    def pause(self, time: int=0.1) -> None:
+        sleep(time)
 
     def sensor(self):
-        """Sensors method."""
+        '''Sensors method'''
         cmd = self.SENS
-        self.ARDUINO.clear_buffer()
 
         # Send command
-        self.ARDUINO.send_str_data(cmd)
+        self.ARDUINO.flush_buffers()
+        self.ARDUINO.send_str(cmd)
         
         # Get sensor data
         msg = ""
         while True:
-            m = self.ARDUINO.read_str_data()
-            if m == self.END_CHAR:
+            m = self.ARDUINO.read_str()
+            if m == self.READY_CHAR:
                 break
             else:
                 msg += m + "\n"
@@ -110,17 +104,17 @@ class Rover(object):
         for sens in msg.split('\n')[1:-1]:
             name, val = [i.strip() for i in sens.split(':')]
             data[name] = int(val)
-        PY_LOGGER.info("Data: {}".format(data))
+        ROV_LOG.info("Data: {}".format(data))
         return data
 
-    def print_data(self):
-        """Print received data."""
+    def get_response(self):
+        '''Continously log all data on the port until protocol end'''
         while True:
-            msg = self.ARDUINO.read_str_data()
-            if msg == self.END_CHAR:
+            msg = self.ARDUINO.read_str()
+            if msg == self.READY_CHAR:
                 break
             else:
-                MCU_LOGGER.info(msg)
+                MCU_LOG.info(msg)
 
 if __name__ == "__main__":
     rover = Rover()
