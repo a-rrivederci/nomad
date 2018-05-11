@@ -13,21 +13,22 @@ import logging
 from serial import Serial, SerialException
 from serial.tools import list_ports
 
+ROOT = logging.getLogger(__name__)
+ROOT.setLevel(level=logging.DEBUG)
+LOG_HANDLER = logging.StreamHandler()
+LOG_FORMATTER = logging.Formatter(
+    fmt='%(asctime)s [%(name)s](%(levelname)s) %(message)s',
+    datefmt='%H:%M:%S'
+)
+LOG_HANDLER.setFormatter(LOG_FORMATTER)
+ROOT.addHandler(LOG_HANDLER)
 
 class Microcontroller(object):
     '''General purpose microcontroller python class'''
 
-    MCU_LOG = logging.getLogger("mcu")
-    MCU_LOG.setLevel(level=logging.DEBUG)
-    LOG_HANDLER = logging.StreamHandler()
-    LOG_FORMATTER = logging.Formatter(
-        fmt='%(asctime)s [%(name)s](%(levelname)s) %(message)s',
-        datefmt='%H:%M:%S'
-    )
-    LOG_HANDLER.setFormatter(LOG_FORMATTER)
-    MCU_LOG.addHandler(LOG_HANDLER)
-
     def __init__(self):
+        self.MCU_LOG = logging.getLogger("{}.{}".format(__name__, __class__.__name__))
+
         self.ports = None
         self.description = None
         self.meta = None
@@ -74,13 +75,14 @@ class Microcontroller(object):
 
 class ArduinoUno(Microcontroller):
     '''Arduino Uno device application interface'''
-    ARD_LOG = logging.getLogger("mcu.uno")
 
     def __init__(self) -> bool:
         super().__init__()
+        self.ARD_LOG = logging.getLogger("{}.{}".format(__name__, __class__.__name__))
+
         self.id = 'Generic CDC'
         self.port = None
-        self.ARD_LOG.info("Initialized {}".format(__class__))
+        self.ARD_LOG.info("Initialized {}".format(__class__.__name__))
     
     def connect(self, baudrate: int = 9600) -> bool:
         '''Automatically find the Arudino Uno and connect to it'''

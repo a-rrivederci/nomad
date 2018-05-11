@@ -3,7 +3,9 @@ from api.arduino import ArduinoUno
 
 class TestArduino(unittest.TestCase):
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(self):
+        super().setUpClass()
         self.uno = ArduinoUno()
 
     def test_import(self):

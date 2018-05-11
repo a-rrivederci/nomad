@@ -14,7 +14,7 @@ from time import sleep
 import logging
 from .arduino import ArduinoUno
 
-ROOT_LOGGER = logging.getLogger("nomad")
+ROOT_LOGGER = logging.getLogger(__name__)
 ROOT_LOGGER.setLevel(level=logging.DEBUG)
 LOG_HANDLER = logging.StreamHandler()
 LOG_FORMATTER = logging.Formatter(
@@ -29,10 +29,12 @@ class Rover(object):
     '''\
     Nomad Rover instructional. 
     '''
-    ROV_LOG = logging.getLogger("nomad.rover")
-    MCU_LOG = logging.getLogger("nomad.arduino")
+    
 
     def __init__(self):
+        self.ROV_LOG = logging.getLogger("{}.py".format(__name__))
+        self.MCU_LOG = logging.getLogger("{}.uno".format(__name__))
+    
         self.ARDUINO = None
         self.BAUDRATE = 115200
         self.ptime = 0.1
@@ -50,7 +52,7 @@ class Rover(object):
         self.LEFT = "E\n"
         self.SENS = "F\n"
 
-        self.ROV_LOG.info("Initialized {}".format(__class__))
+        self.ROV_LOG.info("Initialized {}".format(__class__.__name__))
 
     def connect(self) -> bool:
         '''Establish connection with the mcu'''

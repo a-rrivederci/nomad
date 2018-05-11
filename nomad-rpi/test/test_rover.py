@@ -2,7 +2,8 @@ import unittest
 from api.rover import Rover
 
 class TestRover(unittest.TestCase):
-
+    
+    @classmethod
     def setUpClass(self):
         super().setUpClass()
         self.rov = Rover()
