@@ -10,8 +10,8 @@ class TestArduino(unittest.TestCase):
 
     def test_import(self):
         '''Check the baudrate and end character from the current protocol'''
-        self.assertEqual(self.uno.port, None)
-        self.assertEqual(self.uno.id, "Generic CDC")
+        self.assertEqual(self.uno.ard_port, None)
+        self.assertEqual(self.uno.id, "Arduino")
 
     def test_connection(self):
         '''Test arduino module'''

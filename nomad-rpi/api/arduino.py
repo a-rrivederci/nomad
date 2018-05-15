@@ -80,8 +80,8 @@ class ArduinoUno(Microcontroller):
         super().__init__()
         self.ARD_LOG = logging.getLogger(f"{__name__}.{__class__.__name__}")
 
-        self.id = 'Generic CDC'
-        self.port = None
+        self.id = 'Arduino'
+        self.ard_port = None
         self.ARD_LOG.info(f"Initialized {__class__.__name__}")
     
     def connect(self, baudrate: int = 9600) -> bool:
@@ -105,7 +105,7 @@ class ArduinoUno(Microcontroller):
                     self.ard_port = self.ports[num]
 
                     # Establish connection
-                    self.connection = Serial(self.port, self.baudrate)
+                    self.connection = Serial(self.ard_port, self.baudrate)
                     self.ARD_LOG.info("Connected to Arduino")
                     break
             else:

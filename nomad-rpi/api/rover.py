@@ -67,6 +67,9 @@ class Rover(object):
         self.ARDUINO.send_str(direction)
         self.pause()
 
+        # Get response
+        self.get_response()
+
         return
         
     def pause(self, time: int=0.1) -> None:
@@ -84,6 +87,7 @@ class Rover(object):
         self.ARDUINO.send_str(cmd)
         self.pause()
 
+        # "Get response"
         # Get and process sensor data
         data = {}
         while True:
