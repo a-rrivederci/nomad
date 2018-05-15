@@ -47,7 +47,7 @@ void setup() {
   pinMode(ENL, OUTPUT);
 
   // Start serial ----------------------
-  Serial.begin(115200);
+  Serial.begin(9600);
   Serial.println("NOMAD Uno v3.0.0");
 
   // Disbale all motors 
