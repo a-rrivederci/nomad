@@ -28,12 +28,12 @@ ROOT_LOGGER.addHandler(LOG_HANDLER)
 class Rover(object):
     '''Nomad Rover application center'''
 
-    def __init__(self):
-        self.ROV_LOG = logging.getLogger("{}.py".format(__name__))
-        self.MCU_LOG = logging.getLogger("{}.uno".format(__name__))
+    def __init__(self, baudrate: int = 9600):
+        self.ROV_LOG = logging.getLogger(f"{__name__}.py")
+        self.MCU_LOG = logging.getLogger(f"{__name__}.uno")
     
         self.ARDUINO = None
-        self.BAUDRATE = 115200
+        self.BAUDRATE = baudrate
         self.ptime = 0.1
 
         # Comms protocols
@@ -49,7 +49,7 @@ class Rover(object):
         self.LEFT = "E\n"
         self.SENS = "F\n"
 
-        self.ROV_LOG.info("Initialized {}".format(__class__.__name__))
+        self.ROV_LOG.info(f"Initialized {__class__.__name__}")
 
     def connect(self) -> bool:
         '''Establish connection with the mcu'''
@@ -94,7 +94,7 @@ class Rover(object):
                 label, value = line.split(':')
                 data[label] = int(value)
 
-        self.ROV_LOG.info("Data: {}".format(data))
+        self.ROV_LOG.info(f"Data: {data}")
 
         return data
 

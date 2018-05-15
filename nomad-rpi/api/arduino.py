@@ -27,7 +27,7 @@ class Microcontroller(object):
     '''General purpose microcontroller python class'''
 
     def __init__(self):
-        self.MCU_LOG = logging.getLogger("{}.{}".format(__name__, __class__.__name__))
+        self.MCU_LOG = logging.getLogger(f"{__name__}.{__class__.__name__}")
 
         self.ports = None
         self.description = None
@@ -38,7 +38,7 @@ class Microcontroller(object):
 
     def send_str(self, data: str) -> int:
         '''Send character string to port'''
-        self.MCU_LOG.info("Sending \"{}\" string".format(data))
+        self.MCU_LOG.info(f"Sending '{data}' string")
         num_bytes = self.connection.write(data.encode('utf-8'))
 
         return num_bytes
@@ -46,14 +46,14 @@ class Microcontroller(object):
     def read_str(self, strip: bool = True) -> str:
         '''Read string from port'''
         data = self.connection.readline()
-        self.MCU_LOG.info("Preprocessed: {}".format(data))
+        self.MCU_LOG.info(f"Preprocessed: {data}")
 
         if strip:
             string = data.decode().rstrip()
-            self.MCU_LOG.info("Decoded and RStripped: {}".format(string))
+            self.MCU_LOG.info(f"Decoded and RStripped: {string}")
         else:
             string = data.decode()
-            self.MCU_LOG.info("Only decoded: {}".format(string))
+            self.MCU_LOG.info(f"Only decoded: {string}")
 
         return string
 
@@ -78,11 +78,11 @@ class ArduinoUno(Microcontroller):
 
     def __init__(self) -> bool:
         super().__init__()
-        self.ARD_LOG = logging.getLogger("{}.{}".format(__name__, __class__.__name__))
+        self.ARD_LOG = logging.getLogger(f"{__name__}.{__class__.__name__}")
 
         self.id = 'Generic CDC'
         self.port = None
-        self.ARD_LOG.info("Initialized {}".format(__class__.__name__))
+        self.ARD_LOG.info(f"Initialized {__class__.__name__}")
     
     def connect(self, baudrate: int = 9600) -> bool:
         '''Automatically find the Arudino Uno and connect to it'''
