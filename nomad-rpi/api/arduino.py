@@ -9,6 +9,7 @@ since: 23-APR-2018
 
 import io
 import re
+import sys
 import logging
 from serial import Serial, SerialException
 from serial.tools import list_ports
@@ -80,7 +81,17 @@ class ArduinoUno(Microcontroller):
         super().__init__()
         self.ARD_LOG = logging.getLogger(f"{__name__}.{__class__.__name__}")
 
-        self.id = 'Arduino'
+        if sys.platform == 'linux':
+            des = 'Arduino'
+        elif sys.platform == 'win32':
+            des = 'Uno'
+        elif sys.platform == 'darwin':
+            des = 'CDC'
+        else:
+            des = 'CDC'
+
+        self.os = des
+        self.id = "VID:PID=2341:0043"
         self.ard_port = None
         self.ARD_LOG.info(f"Initialized {__class__.__name__}")
     
@@ -99,9 +110,9 @@ class ArduinoUno(Microcontroller):
             return False
         else:
             # Find likely arduino board
-            for des in self.description:
-                if self.id in des:
-                    num = self.description.index(des)
+            for meta in self.meta:
+                if self.id in meta:
+                    num = self.description.index(meta)
                     self.ard_port = self.ports[num]
 
                     # Establish connection

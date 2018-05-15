@@ -11,7 +11,7 @@ class TestArduino(unittest.TestCase):
     def test_import(self):
         '''Check the baudrate and end character from the current protocol'''
         self.assertEqual(self.uno.ard_port, None)
-        self.assertEqual(self.uno.id, "Arduino")
+        self.assertEqual(self.uno.id, "VID:PID=2341:0043")
 
     def test_connection(self):
         '''Test arduino module'''
