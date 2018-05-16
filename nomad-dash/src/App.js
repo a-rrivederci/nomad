@@ -2,15 +2,18 @@ import React from 'react'
 import { Switch, Route } from 'react-router-dom'
 
 // Main views
-import Cockpit from './main/cockpit'
-import Dash from './main/dash'
-import Login from './main/login'
+import Meter from './main/meter'
+// import Cockpit from './main/cockpit'
+// import Dash from './main/dash'
+// import Login from './main/login'
 
 // Stylesheets
 import './stylesheets/App.css';
-import './stylesheets/cockpit.css';
-import './stylesheets/dash.css';
-import './stylesheets/login.css';
+// import './stylesheets/cockpit.css';
+// import './stylesheets/dash.css';
+// import './stylesheets/login.css';
+import './stylesheets/meter.css'
+
 
 // The App component renders one of the three provided
 // Routes (provided that one matches). Both the /dashboard
@@ -21,9 +24,10 @@ const App = () => (
   // Main program view
   <div id="main">
     <Switch>
-      <Route exact path='/' component={Login}/>
+      <Route exact path='/' component={Meter}/>
+      {/* <Route exact path='/login' component={Login}/>
       <Route path='/dashboard' component={Dash}/>
-      <Route path='/cockpit' component={Cockpit}/>
+      <Route path='/cockpit' component={Cockpit}/> */}
     </Switch>
   </div>
 )
