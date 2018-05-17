@@ -3,6 +3,33 @@ import firebase from 'firebase'
 
 import FullPage from '../components/full-page'
 
+import {Header, Footer} from '../components/bar'
+
+// Dashboard header and navigation bar.
+// Contains the main-menu, and user-menu
+const DashHeader = (props) => (
+  <Header id="meter-header">
+    <div id="meter-menu-button" className="toggle-button">
+      <i className="fa fa-wifi fa-2x"></i>
+    </div>
+
+
+    <div id="meter-user-menu" className="d-flex ml-auto">
+      <div className="d-flex mr-3align-items-center">
+        <span id="brand" className="text-uppercase mx-3">NOMAD</span>
+      </div>
+    </div>
+  </Header>
+)
+
+// Footer of the dashboard page containing the Nomad systems
+// status a link to the documentations and logo
+const DashFooter = () => (
+  <Footer id="meter-footer">
+    <span className="mx-3">Attackle &copy;2018</span>
+  </Footer>
+)
+
 // Control schema window
 class MovementTrack extends Component {
 	constructor(props) {
@@ -103,6 +130,18 @@ class MovementTrack extends Component {
 	}
 }
 
+
+const ValueLabelFormat = (props) => (
+  <div className="col">
+    <div className="row">
+      <span id="sensor-value" className="col container text-center">{props.value}</span>
+    </div>
+    <div className="row">
+      <span className="col container text-center">{props.label}</span>
+    </div>
+  </div>
+)
+
 // Displays the data received from the rover
 class DataTrack extends Component {
   constructor(props) {
@@ -128,13 +167,43 @@ class DataTrack extends Component {
     });
   }
 
+  generateItem(item) {
+    return <ValueLabelFormat key={item.label} value={item.value} label={item.label} />
+  }
+
   render() {
+    const sensors = [
+      {
+        value: this.state.data.leftIR,
+        label: "Left IR"
+      },
+      {
+        value: this.state.data.midIR,
+        label: "Mid IR"
+      },
+      {
+        value: this.state.data.rightIR,
+        label: "Right IR"
+      }
+    ];
+
     return(
       <MovementTrack>
-        {this.state.data.motorSpeed}
-        {this.state.data.leftIR}
-        {this.state.data.midIR}
-        {this.state.data.rightIR}
+        <DashHeader />
+        <div className="container text-dark">
+          <div className="mx-auto mb-auto text-dark">
+            <div className="row">
+              <div id="motor-speed-value" className="col container text-center">{this.state.data.motorSpeed}</div>
+            </div>
+            <div  className="row mb-5">
+              <div id="motor-speed-label" className="col container text-center">RPM</div>
+            </div>
+          </div>
+          <div className="mx-auto mb-auto text-dark row">
+            {sensors.map(this.generateItem)}            
+          </div>
+        </div>
+        <DashFooter />
       </MovementTrack>
     );
   }

@@ -7,10 +7,29 @@
 	display: flex;
 }
 
+#meter-header {
+  margin-bottom: auto;
+}
+#meter-menu-button {
+  width: auto;
+  cursor: pointer;
+  margin-right: 20px;
+}
+#meter-footer {
+  margin-top: auto;
+}
 
 #meter-movement-track {
   display: flex;
-  background: pink;
+  flex-direction: column;
   width: 100vw;
   height: 100vh;
+}
+
+#motor-speed-value {
+  font-size: 15rem;
+}
+
+#sensor-value {
+  font-size: 5rem;
 }

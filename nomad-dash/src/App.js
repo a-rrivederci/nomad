@@ -3,15 +3,9 @@ import { Switch, Route } from 'react-router-dom'
 
 // Main views
 import Meter from './main/meter'
-// import Cockpit from './main/cockpit'
-// import Dash from './main/dash'
-// import Login from './main/login'
 
 // Stylesheets
 import './stylesheets/App.css';
-// import './stylesheets/cockpit.css';
-// import './stylesheets/dash.css';
-// import './stylesheets/login.css';
 import './stylesheets/meter.css'
 
 
