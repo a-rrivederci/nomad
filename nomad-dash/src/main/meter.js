@@ -13,12 +13,30 @@ class MovementTrack extends Component {
         backward: false,
         right: false,
         left: false,
-      }
+      },
+      active: false
     }
-	}
+  }
+
+  handleKeyPress(event) {
+    if (event.key === "Enter") {
+      this.setState({ active: !this.state.active }, function updateFirebase() {
+        const rootRef = firebase.database().ref();
+        const controlRef = rootRef.child('control');
+        // console.log(this.state.movement);
+        controlRef.set({ active: this.state.active });
+      });
+    }
+  }
 
 	handleKeyDown(event) {
-    console.log(event.key);
+    if (!this.state.active) {
+      // console.log(event.key)
+      // Allow no key presses to stop the rover
+      return;
+    }
+
+    // console.log("Active")
 
 		let obj;
 		switch(event.key) {
@@ -64,32 +82,20 @@ class MovementTrack extends Component {
 				break;
 		}
 
-		this.setState({ movement: obj }, function stateUpdateComplete() {
-      // update firebase
-      console.log(this.state.movement);
-		}.bind(this));
+		this.setState({ movement: obj }, function updateFirebase() {
+      const rootRef = firebase.database().ref();
+      const movementRef = rootRef.child('movement');
+      // console.log(this.state.movement);
+      movementRef.set(obj);
+		});
 	}
-
-  /*
-  handleKeyUp(event) {
-    let obj = {
-      forward: false,
-      backward: false,
-      right: false,
-      left: false,
-    };
-		this.setState({ movement: obj }, function stateUpdateComplete() {
-      // update firebase
-      console.log(this.state.movement);
-		}.bind(this));
-  }
-  */
 
 	render() {
 		return (
       <div id="meter-movement-track"
         className=""
-        onKeyDown={(event) => this.handleKeyDown(event)} 
+        onKeyPress={(event) => this.handleKeyPress(event)}
+        onKeyDown={(event) => this.handleKeyDown(event)}
         tabIndex="0" >
         {this.props.children}
       </div>
@@ -113,7 +119,7 @@ class DataTrack extends Component {
 
   componentDidMount() {
     // Track changes in firebase for 'data' child 
-    const rootRef = firebase.database().ref().child('rpi');
+    const rootRef = firebase.database().ref();
     const dataRef = rootRef.child('data')
     dataRef.on('value', snap => {
       this.setState({
