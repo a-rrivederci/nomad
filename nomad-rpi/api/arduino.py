@@ -100,11 +100,17 @@ class ArduinoUno(Microcontroller):
         # Set baudrate
         self.baudrate = baudrate
 
+        if list_ports.comports() == []:
+            self.ARD_LOG.info("No ports found")
+            # exit if no connection
+
+            return False
+    
         # Get ports and their descriptions
         self.ports, self.description, self.meta = zip(*list_ports.comports())
 
         if self.description == []:
-            self.ARD_LOG.info("No ports found")
+            self.ARD_LOG.info("No ports in comports")
             # exit if no connection
 
             return False

@@ -1,6 +1,6 @@
 # NOMAD Pi
 
-Nomad modules for Raspberry Pi
+Modules for Raspberry Pi
 
 ## Index
 

@@ -1,2 +1,3 @@
+#!/bin/bash
 # Start the nomad-rpi program
-python3 ./brain.py
+python3 -m brain

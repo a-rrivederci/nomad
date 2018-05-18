@@ -9,3 +9,4 @@ since: 23-APR-2018
 
 from api.arduino import ArduinoUno
 from api.rover import Rover
+from api.fbase import Firebase
