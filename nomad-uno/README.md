@@ -24,7 +24,12 @@ Each command is sent as a string of command followed by a newline character. Aft
 ```text
 NOMAD Uno v3.0.0
 ~
-> A\n
-Asserted
+
+$ A\n
+>
+~
+
+$ H\n
+<
 ~
 ```
